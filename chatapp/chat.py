@@ -5,7 +5,12 @@ sio = socketio.Client()
 
 def userInput():
     while True:
-        msg = input()
+        try:
+            msg = input()
+        except EOFError:
+            print("Exiting chat.")
+            sio.disconnect()
+            break
         if msg.lower() == 'exit':
             print("Disconnecting")
             sio.disconnect()
@@ -27,6 +32,10 @@ def disconnect():
     print("Disconnected from server.")
 
 if __name__ == '__main__':
-    sio.connect('http://localhost:3000')
-    threading.Thread(target=userInput).start()
-    sio.wait()
+    try:
+        sio.connect('http://localhost:3000')
+        threading.Thread(target=userInput).start()
+        sio.wait()
+    except KeyboardInterrupt:
+        print("\nDisconnected")
+        sio.disconnect()
