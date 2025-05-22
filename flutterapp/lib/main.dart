@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/screens/register_screen.dart';
 
 void main() {
@@ -11,13 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Chat Application',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       routes: {
         RegisterScreen.routeName: (context) => const RegisterScreen(),
+        MainScreen.routeName: (context) => const MainScreen(),
       },
       initialRoute: RegisterScreen.routeName,
     );
