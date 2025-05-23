@@ -22,16 +22,11 @@ function registerUser(socket, name) {
     clients.push({ socket, name });
     console.log(`${name} connected.`);
 
-    socket.emit('message', `Welcome ${name}!`);
+    console.log(`Welcome ${name}!`);
 
-    if (clients.length === 1) {
-        socket.emit('message', 'Waiting for another client to connect...');
-    }
-
-    if (clients.length === 2) {
-        clients[0].socket.emit('message', `${clients[1].name} has connected. You can start chatting!`);
-        clients[1].socket.emit('message', `You are connected to ${clients[0].name}. Start chatting!`);
-    }
+    clients.forEach(client => {
+        client.socket.emit('clients', clients.length);
+    });
 }
 
 function isNotRegistered(socket) {
