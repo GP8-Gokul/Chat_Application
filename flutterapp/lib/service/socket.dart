@@ -4,6 +4,10 @@ import 'package:flutterapp/screens/chat_screen.dart';
 import 'package:flutterapp/screens/register_screen.dart';
 
 class SocketService {
+  static final SocketService _instance = SocketService._internal();
+  factory SocketService() => _instance;
+  SocketService._internal();
+
   late Socket socket;
 
   void connect(BuildContext context) {

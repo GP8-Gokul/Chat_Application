@@ -39,6 +39,16 @@ class _ChatScreenState extends State<ChatScreen> {
     SocketService().disconnect(context);
   }
 
+  void initState() {
+    super.initState();
+    receiveMessage(); // Start listening
+  }
+
+  bool isOwnMessage(String message) {
+    return _messages
+        .contains(message); // Improve this with proper message struct
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +61,9 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: isOwnMessage(_messages[index])
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     padding: const EdgeInsets.all(12.0),

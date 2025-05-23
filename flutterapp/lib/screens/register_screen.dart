@@ -14,6 +14,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final SocketService socketService = SocketService();
   String? _errorText;
 
   void navigateToChatScreen() {
@@ -23,8 +24,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       return;
     }
-    SocketService().connect(context);
-    SocketService().socket.emit('register', _nameController.text);
+    socketService.connect(
+      context,
+    );
+    socketService.socket.emit('register', _nameController.text);
   }
 
   @override
