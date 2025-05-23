@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/main_screen.dart';
+import 'package:flutterapp/widgets/backkground.dart';
+import 'package:flutterapp/widgets/button.dart';
+import 'package:flutterapp/widgets/input_field.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/register';
@@ -11,8 +14,15 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
+  String? _errorText;
 
   void navigateToMainScreen() {
+    if (_nameController.text.isEmpty) {
+      setState(() {
+        _errorText = "Name cannot be empty!";
+      });
+      return;
+    }
     Navigator.pushNamed(context, MainScreen.routeName);
   }
 
@@ -25,21 +35,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        TextField(
-          controller: _nameController,
-          decoration: const InputDecoration(
-            labelText: 'Enter your name',
-            border: OutlineInputBorder(),
+      body: BackgroundContainer(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Enter your name',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                NameInputField(
+                    controller: _nameController,
+                    errorText: _errorText,
+                    hintText: 'Enter your name'),
+                const SizedBox(height: 20),
+                ActionButton(onPressed: navigateToMainScreen),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: navigateToMainScreen,
-          child: const Text('Register'),
-        ),
-      ]),
-    ));
+      ),
+    );
   }
 }
