@@ -11,7 +11,10 @@ class BackgroundContainer extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.black, Color(0xFF4A148C)],
+          colors: [
+            Colors.black,
+            Color(0xFF4A148C),
+          ],
         ),
       ),
       child: child,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/main_screen.dart';
-import 'package:flutterapp/widgets/backkground.dart';
-import 'package:flutterapp/widgets/button.dart';
-import 'package:flutterapp/widgets/input_field.dart';
+import 'package:flutterapp/widgets/background_Container.dart';
+import 'package:flutterapp/widgets/navigation_button.dart';
+import 'package:flutterapp/widgets/name_input_field.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/register';
@@ -53,11 +53,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 20),
                 NameInputField(
-                    controller: _nameController,
-                    errorText: _errorText,
-                    hintText: 'Enter your name'),
+                  controller: _nameController,
+                  errorText: _errorText,
+                  hintText: 'Enter your name',
+                ),
                 const SizedBox(height: 20),
-                ActionButton(onPressed: navigateToMainScreen),
+                NavigationButton(onPressed: navigateToMainScreen),
               ],
             ),
           ),

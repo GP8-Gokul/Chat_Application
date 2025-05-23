@@ -19,7 +19,10 @@ class NameInputField extends StatelessWidget {
         filled: true,
         fillColor: Colors.white,
         hintText: hintText,
-        prefixIcon: const Icon(Icons.person, color: Color(0xFF4A148C)),
+        prefixIcon: const Icon(
+          Icons.person,
+          color: Color(0xFF4A148C),
+        ),
         errorText: errorText,
       ),
     );

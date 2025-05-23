@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ActionButton extends StatelessWidget {
+class NavigationButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const ActionButton({super.key, required this.onPressed});
+  const NavigationButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
