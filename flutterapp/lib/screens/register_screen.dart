@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/main_screen.dart';
-import 'package:flutterapp/widgets/background_Container.dart';
+import 'package:flutterapp/widgets/background_container.dart';
 import 'package:flutterapp/widgets/navigation_button.dart';
 import 'package:flutterapp/widgets/name_input_field.dart';
 
