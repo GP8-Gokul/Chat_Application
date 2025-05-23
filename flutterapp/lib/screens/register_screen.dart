@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/widgets/background_container.dart';
-import 'package:flutterapp/widgets/navigation_button.dart';
-import 'package:flutterapp/widgets/name_input_field.dart';
+import 'package:flutterapp/widgets/confirm_button.dart';
+import 'package:flutterapp/widgets/input_field.dart';
+import 'package:flutterapp/service/socket.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/register';
@@ -16,14 +16,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   String? _errorText;
 
-  void navigateToMainScreen() {
+  void navigateToChatScreen() {
     if (_nameController.text.isEmpty) {
       setState(() {
         _errorText = "Name cannot be empty!";
       });
       return;
     }
-    Navigator.pushNamed(context, MainScreen.routeName);
+    SocketService().connect(context);
+    SocketService().socket.emit('register', _nameController.text);
   }
 
   @override
@@ -52,13 +53,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                NameInputField(
+                InputField(
                   controller: _nameController,
                   errorText: _errorText,
                   hintText: 'Enter your name',
                 ),
                 const SizedBox(height: 20),
-                NavigationButton(onPressed: navigateToMainScreen),
+                ConfirmButton(onPressed: navigateToChatScreen),
               ],
             ),
           ),

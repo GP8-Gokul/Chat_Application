@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/screens/chat_screen.dart';
+import 'package:flutterapp/screens/register_screen.dart';
 
 class MainScreen extends StatefulWidget {
   static const String routeName = '/main';
@@ -13,7 +13,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    Navigator.pushNamed(context, ChatScreen.routeName);
+    Navigator.pushNamed(context, RegisterScreen.routeName);
   }
 
   @override
