@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-import 'package:flutterapp/screens/chat_screen.dart';
 import 'package:flutterapp/screens/register_screen.dart';
 import 'dart:developer';
 
@@ -11,7 +10,7 @@ class SocketService {
 
   late Socket socket;
 
-  void connect(BuildContext context) {
+  void connect() {
     socket = io('http://10.0.2.2:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
@@ -20,15 +19,13 @@ class SocketService {
     socket.connect();
     log('no issues after connect');
     socket.onConnect((_) {
-      //Connected successfully
       log('Connected to server');
     });
     socket.on('clients', (client) {
       if (client > 1 && socket.connected) {
-        Navigator.pushNamed(context, ChatScreen.routeName);
         log('2 clients');
+        return;
       } else {
-        //Show waiting message
         log('Only you here');
       }
     });
@@ -46,7 +43,6 @@ class SocketService {
 
   void receiveMessageFromServer() {
     socket.on('message', (data) {
-      //Display data
       log('Data from server');
     });
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/widgets/background_container.dart';
 import 'package:flutterapp/widgets/confirm_button.dart';
 import 'package:flutterapp/widgets/input_field.dart';
@@ -24,10 +25,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       return;
     }
-    socketService.connect(
-      context,
-    );
+    socketService.connect();
     socketService.socket.emit('register', _nameController.text);
+    Navigator.pushNamed(
+      context,
+      MainScreen.routeName,
+    );
   }
 
   @override
