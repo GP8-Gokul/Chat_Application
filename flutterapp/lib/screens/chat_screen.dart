@@ -39,14 +39,14 @@ class _ChatScreenState extends State<ChatScreen> {
     SocketService().disconnect(context);
   }
 
+  @override
   void initState() {
     super.initState();
-    receiveMessage(); // Start listening
+    receiveMessage();
   }
 
   bool isOwnMessage(String message) {
-    return _messages
-        .contains(message); // Improve this with proper message struct
+    return _messages.contains(message);
   }
 
   @override
