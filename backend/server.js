@@ -26,6 +26,7 @@ function registerUser(socket, name) {
 
     clients.forEach(client => {
         client.socket.emit('clients', clients.length);
+        console.log(clients.length)
     });
 }
 

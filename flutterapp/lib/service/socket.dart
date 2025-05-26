@@ -21,14 +21,14 @@ class SocketService {
     socket.onConnect((_) {
       log('Connected to server');
     });
-    socket.on('clients', (client) {
+    /* socket.on('clients', (client) {
       if (client > 1 && socket.connected) {
         log('2 clients');
         return;
       } else {
         log('Only you here');
       }
-    });
+    }); */
   }
 
   void disconnect(BuildContext context) {
@@ -41,9 +41,16 @@ class SocketService {
     socket.emit('chat', message);
   }
 
-  void receiveMessageFromServer() {
+  void receiveMessageFromServer(Function(String) onMessageReceived) {
     socket.on('message', (data) {
+      onMessageReceived(data.toString());
       log('Data from server');
+    });
+  }
+
+  void onClientCount(Function(String) onCountReceived) {
+    socket.on('clients', (data) {
+      onCountReceived(data.toString());
     });
   }
 }

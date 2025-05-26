@@ -5,8 +5,8 @@ import 'package:flutterapp/service/socket.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String routeName = '/chat';
-  const ChatScreen({super.key});
-
+  final SocketService socketService;
+  const ChatScreen({super.key, required this.socketService});
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -14,30 +14,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final List<String> _messages = [];
-
-  void sendMessage() {
-    if (_messageController.text.isNotEmpty) {
-      SocketService().sendMessageToServer(_messageController.text);
-      setState(() {
-        _messages.add(_messageController.text);
-        _messageController.clear();
-      });
-    }
-  }
-
-  void receiveMessage() {
-    SocketService().socket.on('message', (data) {
-      if (data != null) {
-        setState(() {
-          _messages.add(data);
-        });
-      }
-    });
-  }
-
-  void end() {
-    SocketService().disconnect(context);
-  }
+  late bool isOwnMessage = false;
 
   @override
   void initState() {
@@ -45,8 +22,27 @@ class _ChatScreenState extends State<ChatScreen> {
     receiveMessage();
   }
 
-  bool isOwnMessage(String message) {
-    return _messages.contains(message);
+  @override
+  void dispose() {
+    end();
+    super.dispose();
+  }
+
+  void receiveMessage() {
+    widget.socketService.receiveMessageFromServer((onMessageReceived) {
+      _messages.add(onMessageReceived);
+      isOwnMessage = false;
+    });
+  }
+
+  void sendMessage() {
+    if (_messageController.text.isEmpty) return;
+    widget.socketService.sendMessageToServer(_messageController.toString());
+    isOwnMessage = true;
+  }
+
+  void end() {
+    widget.socketService.disconnect(context);
   }
 
   @override
@@ -61,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 return Align(
-                  alignment: isOwnMessage(_messages[index])
+                  alignment: isOwnMessage
                       ? Alignment.centerRight
                       : Alignment.centerLeft,
                   child: Container(
