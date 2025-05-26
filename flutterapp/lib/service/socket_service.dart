@@ -23,6 +23,20 @@ class SocketService extends ChangeNotifier {
     });
   }
 
+  void sendMessage(userId, message) {
+    allUsers[userId]['messages'].add({
+      'senderId': 'me',
+      'message': message,
+    });
+    log('Sending message: $message to user: $userId added to all users list');
+    socket.emit('private_message', {
+      'toId': userId,
+      'message': message,
+    });
+    log('Message sent: $message to user: $userId');
+    notifyListeners();
+  }
+
   void updateUserList() {
     socket.on('user_list', (updatedList) {
       log('Received user list: $updatedList');
@@ -55,6 +69,20 @@ class SocketService extends ChangeNotifier {
       }
 
       log('Updated allUsers: $allUsers');
+    });
+  }
+
+  void listenForPrivateMessages() {
+    socket.on('private_message', (data) {
+      final senderId = data['from'] as String;
+      final message = data['message'] as String;
+
+      allUsers[senderId]['messages'].add({
+        'senderId': senderId,
+        'message': message,
+      });
+
+      notifyListeners();
     });
   }
 }

@@ -38,10 +38,11 @@ function privateMessage(fromSocket, toId, message) {
     const toClient = userList.find(user => user.socket.id === toId);
     if (toClient) {
         toClient.socket.emit('private_message', {
-            from: fromSocket.name,
+            from: fromSocket.id,
             message: message
         });
     }
+    console.log(`Private message from ${fromSocket.name} to ${toId}: ${message}`);
 }
 
 io.on('connection', socket => {
