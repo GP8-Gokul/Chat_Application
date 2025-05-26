@@ -3,6 +3,12 @@ import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutterapp/screens/register_screen.dart';
 import 'dart:developer';
 
+Map<String, dynamic> allMessages = {
+  'userName': '',
+  'userId': '',
+  'messages': [],
+};
+
 class SocketService {
   static final SocketService _instance = SocketService._internal();
   factory SocketService() => _instance;
@@ -15,19 +21,11 @@ class SocketService {
       'transports': ['websocket'],
       'autoConnect': false,
     });
-    log('no issues before connect');
+
     socket.connect();
-    log('no issues after connect');
+
     socket.onConnect((_) {
       log('Connected to server');
-    });
-    socket.on('clients', (client) {
-      if (client > 1 && socket.connected) {
-        log('2 clients');
-        return;
-      } else {
-        log('Only you here');
-      }
     });
   }
 

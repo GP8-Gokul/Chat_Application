@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/chat_screen.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class MainScreen extends StatefulWidget {
   static const String routeName = '/main';
@@ -12,8 +13,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
-    super.initState();
-    Navigator.pushNamed(context, ChatScreen.routeName);
+    Socket
   }
 
   @override
