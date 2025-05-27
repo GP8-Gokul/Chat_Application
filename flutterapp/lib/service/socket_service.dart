@@ -20,6 +20,7 @@ class SocketService extends ChangeNotifier {
 
     socket.onConnect((_) {
       log('Connected to server');
+      listenForPrivateMessages();
     });
   }
 
