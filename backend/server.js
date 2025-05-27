@@ -23,8 +23,8 @@ io.on('connection', socket => {
         privateMessage.privateMessage(socket, toId, message);
     });
 
-    socket.on('create_group', ({ name, creator }) => {
-        group.createGroup(io, socket, name, creator);
+    socket.on('create_group', ({ name, creatorID }) => {
+        group.createGroup(io, socket, name, creatorID);
     });
 
     socket.on('join_group', ({ groupId }) => {
