@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/chat_screen.dart';
+import 'package:flutterapp/screens/group_main_screen.dart';
 import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/screens/register_screen.dart';
 
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Chat Application',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
         RegisterScreen.routeName: (context) => const RegisterScreen(),
         MainScreen.routeName: (context) => const MainScreen(),
         ChatScreen.routeName: (context) => const ChatScreen(),
+        GroupMainScreen.routeName: (context) => const GroupMainScreen(),
       },
       initialRoute: RegisterScreen.routeName,
     );

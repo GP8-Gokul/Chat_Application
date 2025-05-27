@@ -7,6 +7,7 @@ const server = http.createServer(app);
 const io = socket(server);
 
 let userList = [];
+let groupList = [];
 
 function registerUser(socket, name) {
     socket.name = name;
@@ -57,6 +58,14 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
         handleDisconnect(socket);
     });
+
+    /* socket.on('create_group', ({ name, members }) => {
+        createGroup(name, members);
+    });
+
+    socket.on('get_groups', () => {
+        getgroups(socket);
+    }); */
 });
 
 server.listen(3000, () => {

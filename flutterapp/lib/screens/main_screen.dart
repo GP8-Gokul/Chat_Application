@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/chat_screen.dart';
+import 'package:flutterapp/screens/group_main_screen.dart';
 import 'package:flutterapp/service/socket_service.dart';
 
 class MainScreen extends StatefulWidget {
@@ -35,7 +36,25 @@ class _MainScreenState extends State<MainScreen> {
     final myId = socketService.socket.id;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Users List')),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text('Users List'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.group),
+            onPressed: () {
+              Navigator.pushNamed(context, GroupMainScreen.routeName);
+            },
+          ),
+        ],
+      ),
       body: ListView(
         children:
             allUsers.entries.where((entry) => entry.key != myId).map((entry) {
