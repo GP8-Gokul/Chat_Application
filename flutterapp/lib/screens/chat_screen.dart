@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/service/socket_service.dart';
 import 'dart:developer';
 
@@ -58,8 +59,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final messages =
-        socketService.allUsers[userId]['messages'] as List<dynamic>;
+    final userData = socketService.allUsers[userId];
+    if (userData == null) {
+      Navigator.pushReplacementNamed(context, MainScreen.routeName);
+    }
+    final messages = userData['messages'] as List<dynamic>? ?? [];
 
     return Scaffold(
       appBar: AppBar(
