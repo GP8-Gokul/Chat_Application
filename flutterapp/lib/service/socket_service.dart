@@ -96,7 +96,7 @@ class SocketService extends ChangeNotifier {
     log('Creating group: $groupName');
     socket.emit('create_group', {
       'name': groupName,
-      'creatorID': socket,
+      'creatorID': socket.id,
     });
     log('Group creation request sent for: $groupName');
   }
