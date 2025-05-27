@@ -1,11 +1,9 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/screens/chat_screen.dart';
-import 'package:flutterapp/screens/waiting_screen.dart';
+import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/widgets/background_container.dart';
 import 'package:flutterapp/widgets/confirm_button.dart';
 import 'package:flutterapp/widgets/input_field.dart';
-import 'package:flutterapp/service/socket.dart';
+import 'package:flutterapp/service/socket_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/register';
@@ -20,18 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final SocketService socketService = SocketService();
   String? _errorText;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  void registerToServer() {
+  void navigateToMainScreen() {
     if (_nameController.text.isEmpty) {
       setState(() {
         _errorText = "Name cannot be empty!";
@@ -40,28 +27,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
     socketService.connect();
     socketService.socket.emit('register', _nameController.text);
-    clientCount();
+    Navigator.pushNamed(
+      context,
+      MainScreen.routeName,
+    );
   }
 
-  void clientCount() {
-    socketService.onClientCount((count) {
-      log(count);
-      if (count == '1') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WaitingScreen(socketService: socketService),
-          ),
-        );
-      } else if (count == '2') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ChatScreen(socketService: socketService),
-          ),
-        );
-      }
-    });
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -90,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Enter your name',
                 ),
                 const SizedBox(height: 20),
-                ConfirmButton(onPressed: registerToServer),
+                ConfirmButton(onPressed: navigateToMainScreen),
               ],
             ),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutterapp/widgets/confirm_button.dart';
-import 'package:flutterapp/widgets/input_field.dart';
-import 'package:flutterapp/service/socket.dart';
+import 'package:flutterapp/screens/main_screen.dart';
+import 'package:flutterapp/service/socket_service.dart';
+import 'dart:developer';
 
 class ChatScreen extends StatefulWidget {
   static const String routeName = '/chat';
@@ -12,84 +12,129 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late final String userId;
+  late final String userName;
+
+  final SocketService socketService = SocketService();
   final TextEditingController _messageController = TextEditingController();
-  final List<String> _messages = [];
-  late bool isOwnMessage = false;
+
+  late VoidCallback socketListener;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final rawArgs = ModalRoute.of(context)!.settings.arguments;
+
+    if (rawArgs is Map) {
+      final args = Map<String, dynamic>.from(rawArgs);
+      userId = args['userId'];
+      userName = args['userName'];
+    } else {
+      throw Exception('Invalid arguments passed to ChatScreen');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    receiveMessage();
+    socketListener = () => setState(() {});
+    socketService.addListener(socketListener);
   }
 
   @override
   void dispose() {
-    end();
+    socketService.removeListener(socketListener);
+    _messageController.dispose();
     super.dispose();
   }
 
-  void receiveMessage() {
-    widget.socketService.receiveMessageFromServer((onMessageReceived) {
-      _messages.add(onMessageReceived);
-      isOwnMessage = false;
-    });
-  }
-
   void sendMessage() {
-    if (_messageController.text.isEmpty) return;
-    widget.socketService.sendMessageToServer(_messageController.toString());
-    isOwnMessage = true;
-  }
-
-  void end() {
-    widget.socketService.disconnect(context);
+    final messageText = _messageController.text.trim();
+    log('Sending message: $messageText to user: $userId');
+    if (messageText.isNotEmpty) {
+      socketService.sendMessage(userId, messageText);
+      _messageController.clear();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userData = socketService.allUsers[userId];
+    if (userData == null) {
+      Navigator.pushReplacementNamed(context, MainScreen.routeName);
+    }
+    final messages = userData['messages'] as List<dynamic>? ?? [];
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(userName),
+      ),
       body: Column(
         children: [
-          Container(height: 60, color: Colors.transparent),
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: _messages.length,
+              padding: const EdgeInsets.all(8.0),
+              itemCount: messages.length,
               itemBuilder: (context, index) {
+                final msgMap = messages[index] as Map<String, dynamic>;
+                final senderId = msgMap['senderId'] as String;
+                final messageText = msgMap['message'] as String;
+
+                final bool isMe = senderId != userId;
+
                 return Align(
-                  alignment: isOwnMessage
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
+                  alignment:
+                      isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 14),
+                    margin: const EdgeInsets.symmetric(vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple.shade100,
-                      borderRadius: BorderRadius.circular(12.0),
+                      color: isMe ? Colors.blueAccent : Colors.grey.shade300,
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(12),
+                        topRight: const Radius.circular(12),
+                        bottomLeft: Radius.circular(isMe ? 12 : 0),
+                        bottomRight: Radius.circular(isMe ? 0 : 12),
+                      ),
                     ),
                     child: Text(
-                      _messages[index],
-                      style: const TextStyle(fontSize: 16),
+                      messageText.toString(),
+                      style: TextStyle(
+                        color: isMe ? Colors.white : Colors.black87,
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InputField(
-                      controller: _messageController, errorText: null),
-                ),
-                const SizedBox(width: 10),
-                ConfirmButton(onPressed: sendMessage),
-              ],
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      sendMessage();
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+          )
         ],
       ),
     );

@@ -6,69 +6,52 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
-let clients = [];
-
-function isRoomFull(socket) {
-    if (clients.length >= 2) {
-        socket.emit('message', 'Room full. Try again later.');
-        socket.disconnect();
-        return true;
-    };
-    return false;
-}
+let userList = [];
 
 function registerUser(socket, name) {
     socket.name = name;
-    clients.push({ socket, name });
+    userList.push({ socket: socket, name: name, socketId: socket.id });
     console.log(`${name} connected.`);
 
-    console.log(`Welcome ${name}!`);
-
-    clients.forEach(client => {
-        client.socket.emit('clients', clients.length);
-        console.log(clients.length)
-    });
+    sendUserListToAll();
 }
 
-function isNotRegistered(socket) {
-    if (!socket.name) {
-        socket.emit('message', 'Please register before chatting.');
-        return true;
-    }
-    return false;
-}
+function sendUserListToAll() {
+    const updatedList = userList.map(user => ({
+        name: user.name,
+        id: user.socketId
+    }));
 
-function chat(socket, msg) {
-    if (isNotRegistered(socket)) return;
-
-    clients.forEach(client => {
-        if (client.socket !== socket) {
-            client.socket.emit('message', `${socket.name}: ${msg}`);
-        }
-    });
+    io.emit('user_list', updatedList);
 }
 
 function handleDisconnect(socket) {
-    const index = clients.findIndex(c => c.socket === socket);
+    const index = userList.findIndex(c => c.socket === socket);
     if (index !== -1) {
-        const disconnectedClient = clients.splice(index, 1)[0];
+        const disconnectedClient = userList.splice(index, 1)[0];
         console.log(`${disconnectedClient.name} disconnected.`);
-
-        clients.forEach(client => {
-            client.socket.emit('message', `${disconnectedClient.name} has disconnected.`);
-        });
+        sendUserListToAll();
     }
 }
 
-io.on('connection', socket => {
-    if (isRoomFull(socket)) return;
+function privateMessage(fromSocket, toId, message) {
+    const toClient = userList.find(user => user.socket.id === toId);
+    if (toClient) {
+        toClient.socket.emit('private_message', {
+            from: fromSocket.id,
+            message: message
+        });
+    }
+    console.log(`Private message from ${fromSocket.name} to ${toId}: ${message}`);
+}
 
-    socket.on('register', (name) => {
+io.on('connection', socket => {
+    socket.on('register', name => {
         registerUser(socket, name);
     });
 
-    socket.on('chat', msg => {
-        chat(socket, msg);
+    socket.on('private_message', ({ toId, message }) => {
+        privateMessage(socket, toId, message);
     });
 
     socket.on('disconnect', () => {
