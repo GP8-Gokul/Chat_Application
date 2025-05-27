@@ -4,10 +4,10 @@ import 'package:flutterapp/service/socket_service.dart';
 
 class GroupMainScreen extends StatefulWidget {
   static const String routeName = '/groupMain';
-  const GroupMainScreen({Key? key}) : super(key: key);
+  const GroupMainScreen({super.key});
 
   @override
-  _GroupMainScreenState createState() => _GroupMainScreenState();
+  State<GroupMainScreen> createState() => _GroupMainScreenState();
 }
 
 class _GroupMainScreenState extends State<GroupMainScreen> {
