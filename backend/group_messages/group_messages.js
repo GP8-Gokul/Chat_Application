@@ -13,22 +13,23 @@ function joinGroup(socket, groupId) {
     const group = group.findGroupById(groupId);
     if (group) {
         socket.join(groupId);
-        group.members.push(socket.name);
+        group.members.push(socket.id);
         console.log(`${socket.name} joined group: ${group.name}`);
     }
 }
 
-function createGroup(io, socket, name, creator) {
+function createGroup(io, socket, name, creatorID) {
+    console.log(`Creating group: ${name} by ${creatorID}`);
     const groupId = Date.now().toString();
     const group = {
         id: groupId,
         name,
-        creator,
-        members: [creator]
+        creatorID,
+        members: [creatorID]
     };
     group.addGroup(group);
     socket.join(groupId);
-    console.log(`Group created: ${name} by ${creator}`);
+    console.log(`Group created: ${name} by ${creatorID}`);
     sendGroupListToAll(io);
 }
 

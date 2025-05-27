@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/service/socket_service.dart';
+import '../widgets/group_popup.dart';
 
 class GroupMainScreen extends StatefulWidget {
   static const String routeName = '/groupMain';
@@ -13,8 +14,24 @@ class GroupMainScreen extends StatefulWidget {
 class _GroupMainScreenState extends State<GroupMainScreen> {
   final SocketService socketService = SocketService();
 
-  void createGroup() {
+  late VoidCallback groupSocketListener;
+
+  @override
+  void initState() {
+    super.initState();
+    socketService.loadGroups();
+    groupSocketListener = () => setState(() {});
+    socketService.addListener(groupSocketListener);
+  }
+
+  void createGroup() async {
     log("Create Group button pressed");
+    String groupName = await showDialog(
+      context: context,
+      builder: (context) => const GroupPopup(),
+    );
+    log("Group name received: $groupName");
+    socketService.createGroup(groupName);
   }
 
   @override
@@ -36,15 +53,33 @@ class _GroupMainScreenState extends State<GroupMainScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.add,
                   size: 30,
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: socketService.allGroups.length,
+              itemBuilder: (context, index) {
+                final groupId = socketService.allGroups.keys.elementAt(index);
+                final groupData = socketService.allGroups[groupId];
+                return ListTile(
+                  title: Text(groupData?['name'] ?? 'Unknown Group'),
+                  subtitle:
+                      Text('Members: ${groupData?['members'].length ?? 0}'),
+                  onTap: () {
+                    socketService.joinGroup(groupId);
+                    Navigator.pushNamed(context, '/groupChat',
+                        arguments: groupId);
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),

@@ -25,8 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       return;
     }
-    socketService.connect();
-    socketService.socket.emit('register', _nameController.text);
+    socketService.connect(_nameController.text);
     Navigator.pushNamed(
       context,
       MainScreen.routeName,
