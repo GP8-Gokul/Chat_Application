@@ -10,8 +10,8 @@ function sendGroupListToAll(io) {
 }
 
 function joinGroup(socket, groupId) {
-    const group = group.findGroupById(groupId);
-    if (group) {
+    const groupFound = group.findGroupById(groupId);
+    if (groupFound) {
         socket.join(groupId);
         group.members.push(socket.name);
         console.log(`${socket.name} joined group: ${group.name}`);
@@ -20,13 +20,13 @@ function joinGroup(socket, groupId) {
 
 function createGroup(io, socket, name, creator) {
     const groupId = Date.now().toString();
-    const group = {
+    const newGroup = {
         id: groupId,
         name,
         creator,
         members: [creator]
     };
-    group.addGroup(group);
+    group.addGroup(newGroup);
     socket.join(groupId);
     console.log(`Group created: ${name} by ${creator}`);
     sendGroupListToAll(io);
