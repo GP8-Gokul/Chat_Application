@@ -34,11 +34,12 @@ function createGroup(io, socket, name, creatorID) {
 }
 
 function groupMessage(io, socket, groupId, message) {
-    const group = group.findGroupById(groupId);
-    if (group) {
-        io.to(groupId).emit('group_message', {
-            from: socket.name,
-            message,
+    const foundGroup = group.findGroupById(groupId);
+    if (foundGroup) {
+        io.emit('group_message', {
+            fromGroup: groupId,
+            fromUser: socket.id,
+            message: message,
         });
         console.log(`Group message from ${socket.name} to group ${groupId}: ${message}`);
     }

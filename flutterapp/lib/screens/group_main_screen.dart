@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/screens/group_chat_screen.dart';
 import 'package:flutterapp/service/socket_service.dart';
 import '../widgets/group_popup.dart';
 
@@ -32,6 +33,19 @@ class _GroupMainScreenState extends State<GroupMainScreen> {
     );
     log("Group name received: $groupName");
     socketService.createGroup(groupName);
+  }
+
+  void joinOrEnterGroup(String groupId, Map<String, dynamic>? groupData) {
+    socketService.joinGroup(groupId);
+    Navigator.pushNamed(
+      context,
+      GroupChatScreen.routeName,
+      arguments: {
+        'groupId': groupId,
+        'groupName': groupData?['name'] ?? 'Unknown Group',
+        'groupMessages': groupData?['messages'] ?? [],
+      },
+    );
   }
 
   @override
@@ -73,9 +87,7 @@ class _GroupMainScreenState extends State<GroupMainScreen> {
                   subtitle:
                       Text('Members: ${groupData?['members'].length ?? 0}'),
                   onTap: () {
-                    socketService.joinGroup(groupId);
-                    Navigator.pushNamed(context, '/groupChat',
-                        arguments: groupId);
+                    joinOrEnterGroup(groupId, groupData);
                   },
                 );
               },

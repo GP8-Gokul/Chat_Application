@@ -23,6 +23,7 @@ class SocketService extends ChangeNotifier {
     socket.onConnect((_) {
       log('Connected to server');
       listenForPrivateMessages();
+      listenForGroupMessages();
     });
     socket.emit('register', name);
     this.name = name;
@@ -103,7 +104,12 @@ class SocketService extends ChangeNotifier {
 
   void joinGroup(String groupId) {
     log('Joining group: $groupId');
-    socket.emit('join_group', {'groupId': groupId});
+    if (!allGroups.containsKey(groupId)) {
+      socket.emit('join_group', {'groupId': groupId});
+      log('Join group request sent for: $groupId');
+    } else {
+      log('Already a member of group: $groupId So entering group');
+    }
   }
 
   void loadGroups() {
@@ -120,9 +126,11 @@ class SocketService extends ChangeNotifier {
           allGroups[groupId] = {
             'name': groupName,
             'members': [],
+            'messages': [],
           };
           hasChanges = true;
         }
+        log(allGroups.toString());
 
         if (hasChanges) {
           notifyListeners();
@@ -133,18 +141,39 @@ class SocketService extends ChangeNotifier {
 
   void listenForGroupMessages() {
     socket.on('group_message', (data) {
-      final groupId = data['groupId'] as String;
+      final groupId = data['fromGroup'] as String;
+      final senderId = data['fromUser'] as String;
       final message = data['message'] as String;
 
-      if (allGroups.containsKey(groupId)) {
+      if (allGroups.containsKey(groupId) && senderId != socket.id) {
+        log('senderId: $senderId, socket.id: ${socket.id}');
         allGroups[groupId]['messages'].add({
-          'senderId': data['from'],
+          'senderId': senderId,
           'message': message,
         });
         notifyListeners();
+        log('Received group message: $message in group: $groupId');
       } else {
         log('Group $groupId not found in allGroups');
       }
     });
+  }
+
+  void sendGroupMessage(String groupId, String message) {
+    log('Sending group message: $message to group: $groupId');
+    socket.emit('group_message', {
+      'groupId': groupId,
+      'message': message,
+    });
+    if (allGroups.containsKey(groupId)) {
+      allGroups[groupId]['messages'].add({
+        'senderId': 'me',
+        'message': message,
+      });
+      notifyListeners();
+      log('Message sent: $message to group: $groupId');
+    } else {
+      log('Group $groupId not found in allGroups');
+    }
   }
 }
