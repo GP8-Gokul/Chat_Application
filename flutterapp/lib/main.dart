@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/screens/chat_screen.dart';
 import 'package:flutterapp/screens/group_chat_screen.dart';
 import 'package:flutterapp/screens/group_main_screen.dart';
+import 'package:flutterapp/screens/login_screen.dart';
 import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/screens/register_screen.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChatScreen.routeName: (context) => const ChatScreen(),
         GroupMainScreen.routeName: (context) => const GroupMainScreen(),
         GroupChatScreen.routeName: (context) => const GroupChatScreen(),
+        LoginScreen.routeName: (context) => const LoginScreen(),
       },
       initialRoute: RegisterScreen.routeName,
     );

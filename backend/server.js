@@ -5,10 +5,15 @@ const socket = require('socket.io');
 const group = require('./group_messages/group_messages');
 const connection = require('./connection/connection');
 const privateMessage = require('./private_messages/user_message');
+const auth = require('./authentication/authentication');
 
 const app = express();
 const server = http.createServer(app);
 const io = socket(server);
+
+app.post('/signup', auth.signup);
+app.post('/login', auth.login);
+app.post('/verify-otp', auth.verifyOtp);
 
 io.on('connection', socket => {
     socket.on('register', name => {
