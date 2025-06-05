@@ -8,6 +8,7 @@ A simple real-time chat application built with **Node.js**, **Socket.IO**, and a
 
 - Real-time messaging with Socket.IO  
 - Simple 1-on-1 chat system  
+- Group Messaging
 - User registration (in progress)
 - Flutter frontend (in progress)
 
@@ -16,6 +17,7 @@ A simple real-time chat application built with **Node.js**, **Socket.IO**, and a
 - Node.js + Express  
 - Socket.IO  
 - Flutter (Dart)
+- Mongo DB
 
 ## Getting Started
 
