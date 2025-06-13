@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'dart:developer';
@@ -175,5 +177,46 @@ class SocketService extends ChangeNotifier {
     } else {
       log('Group $groupId not found in allGroups');
     }
+  }
+
+  Future<int?> signup(String username, String email, String password) async {
+    log('Signing up with username: $username, email: $email');
+    final completer = Completer<int?>();
+
+    socket.emitWithAck('signup', {
+      'username': username,
+      'email': email,
+      'password': password,
+    }, ack: (data) {
+      if (data is Map && data.containsKey('status')) {
+        completer.complete(data['status'] as int?);
+      } else if (data is int) {
+        completer.complete(data);
+      } else {
+        completer.complete(null);
+      }
+    });
+
+    return completer.future;
+  }
+
+  Future<int?> login(String username, String password) async {
+    log('Logging in with username: $username');
+    final completer = Completer<int?>();
+
+    socket.emitWithAck('login', {
+      'username': username,
+      'password': password,
+    }, ack: (data) {
+      if (data is Map && data.containsKey('status')) {
+        completer.complete(data['status'] as int?);
+      } else if (data is int) {
+        completer.complete(data);
+      } else {
+        completer.complete(null);
+      }
+    });
+
+    return completer.future;
   }
 }
