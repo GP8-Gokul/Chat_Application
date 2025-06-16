@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/service/auth.dart';
 import 'package:flutterapp/widgets/input_field.dart';
 import 'package:flutterapp/widgets/confirm_button.dart';
+import 'dart:developer';
 
 class AuthScreen extends StatefulWidget {
   static const String routeName = '/auth';
@@ -28,6 +29,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void login() async {
+    log("Logging in with email: ${_emailController.text}");
     final responseMessage = await AuthService()
         .login(_emailController.text, _passwordController.text);
     setState(() {
@@ -44,7 +46,7 @@ class _AuthScreenState extends State<AuthScreen> {
       });
       return;
     }
-
+    log("Signing up with username: ${_usernameController.text}, email: ${_emailController.text}");
     final responseMessage = await AuthService().signup(_usernameController.text,
         _emailController.text, _passwordController.text);
     setState(() {

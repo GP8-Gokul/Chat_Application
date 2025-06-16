@@ -11,6 +11,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
+app.use(express.json());
+
 app.post('/signup', auth.signup);
 app.post('/login', auth.login);
 app.post('/verify-otp', auth.verifyOtp);
