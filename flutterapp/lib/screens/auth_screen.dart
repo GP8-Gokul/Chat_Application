@@ -1,7 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutterapp/service/socket_service.dart';
+import 'package:flutterapp/service/auth.dart';
 import 'package:flutterapp/widgets/input_field.dart';
 import 'package:flutterapp/widgets/confirm_button.dart';
 
@@ -22,7 +20,6 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   String? _errorMessage;
-  final SocketService socketService = SocketService();
 
   void toggleScreen() {
     setState(() {
@@ -31,54 +28,28 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void login() async {
-    final result = await socketService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
-    if (result == 200) {
-      socketService.connect(_emailController.text);
-      sleep(const Duration(seconds: 3));
-      Navigator.pushReplacementNamed(context, '/chat');
-    } else if (result == 401) {
-      setState(() {
-        _errorMessage = "Invalid email or password";
-        _passwordController.clear();
-      });
-    } else if (result == 500) {
-      setState(() {
-        _errorMessage = "Login failed. Please try again.";
-      });
-    }
+    final responseMessage = await AuthService()
+        .login(_emailController.text, _passwordController.text);
+    setState(() {
+      _errorMessage = responseMessage;
+    });
   }
 
   void signUp() async {
-    final String validationMessage = validatePassword(
+    final validationMessage = validatePassword(
         _passwordController.text, _confirmPasswordController.text);
     if (validationMessage.isNotEmpty) {
       setState(() {
         _errorMessage = validationMessage;
-        _passwordController.clear();
-        _confirmPasswordController.clear();
       });
       return;
-    } else {
-      final result = await socketService.signup(
-        _usernameController.text,
-        _emailController.text,
-        _passwordController.text,
-      );
-      if (result == 201) {
-        Navigator.pushReplacementNamed(context, '/auth');
-      } else if (result == 400) {
-        setState(() {
-          _errorMessage = "Email already exists, try logging in";
-        });
-      } else if (result == 500) {
-        setState(() {
-          _errorMessage = "Signup failed. Please try again.";
-        });
-      }
     }
+
+    final responseMessage = await AuthService().signup(_usernameController.text,
+        _emailController.text, _passwordController.text);
+    setState(() {
+      _errorMessage = responseMessage;
+    });
   }
 
   String validatePassword(String password, String confirmPassword) {
