@@ -3,7 +3,7 @@ require('dotenv').config();
 
 password = process.env.DB_PASSWORD
 
-mongoose.connect(`mongodb+srv://gokulpjayan2004:${password}@cluster0.infebp8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`, {
+mongoose.connect(`mongodb+srv://gokulpjayan2004:${password}@cluster0.infebp8.mongodb.net/chatApp?retryWrites=true&w=majority&appName=Cluster0`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
