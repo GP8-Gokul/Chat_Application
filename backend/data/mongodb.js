@@ -1,9 +1,16 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-mongoose.connect('mongodb://127.0.0.1:27017/chatApp', {
+password = process.env.DB_PASSWORD
+
+mongoose.connect(`mongodb+srv://gokulpjayan2004:${password}@cluster0.infebp8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
+}).then(() => {
+    console.log("Connected to MongoDB Atlas");
+}).catch((err) => {
+    console.error("Connection error:", err);
+});
 
 const userSchema = new mongoose.Schema({
     username: String,
@@ -14,3 +21,4 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User };
+
