@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/screens/main_screen.dart';
 import 'package:flutterapp/service/auth.dart';
+import 'package:flutterapp/service/socket_service.dart';
 import 'package:flutterapp/widgets/input_field.dart';
 import 'package:flutterapp/widgets/confirm_button.dart';
 import 'dart:developer';
@@ -30,10 +32,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void login() async {
     log("Logging in with email: ${_emailController.text}");
-    final responseMessage = await AuthService()
-        .login(_emailController.text, _passwordController.text);
+    SocketService().connect(_emailController.text);
     setState(() {
-      _errorMessage = responseMessage;
+      Navigator.pushNamed(context, MainScreen.routeName);
     });
   }
 
@@ -51,6 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
         _emailController.text, _passwordController.text);
     setState(() {
       _errorMessage = responseMessage;
+      Navigator.pushNamed(context, MainScreen.routeName);
     });
   }
 
